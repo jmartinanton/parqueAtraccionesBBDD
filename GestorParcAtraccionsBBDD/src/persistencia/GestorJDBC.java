@@ -54,6 +54,11 @@ public class GestorJDBC implements ProveedorPersistencia {
     //Heu de crear la sentència per actualitzar un registre del parc d'atraccions
     //Registre a actualitzar: el que correspongui al codi passat per paràmetre
     //Camps a actualitzar: nom i adreça amb els valors passats per a paràmetre 
+    public void actualizarParcAtraccions(int codi, String nom, String adreca) throws SQLException {
+        updateParcAtraccionsSQL = "UPDATE parcAtraccions SET nom:= '" + nom + "', adreca:= '" + adreca +
+                                    "' WHERE codi = " + codi;
+        updateParcAtraccionsSQLSt = conn.prepareCall(updateParcAtraccionsSQL);
+    }
 
     private PreparedStatement updateParcAtraccionsSQLSt;
 
@@ -68,6 +73,11 @@ public class GestorJDBC implements ProveedorPersistencia {
     //d'atraccions determinat.
     //Registres a eliminar: Tots els registres amb el codi de parc d'atraccions
     //igual al passat per paràmetre.
+    public void borrarCoordinadores() {
+        deleteCoordinadorSQL = "UPDATE parcAtraccions SET nom:= '" + nom + "', adreca:= '" + adreca +
+                                    "' WHERE codi = " + codi;
+        deleteCoordinadorSQLSt = conn.prepareCall(updateParcAtraccionsSQL);
+    }
 
     private PreparedStatement deleteCoordinadorSQLSt;
 
