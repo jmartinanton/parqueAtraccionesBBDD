@@ -30,6 +30,7 @@ public class GestorJDBC implements ProveedorPersistencia {
     //Registres: tots els del codi de parc d'atraccions passat per paràmetre
     public void crearSQLSelect(int codi) throws SQLException {
         selectParcAtraccionsSQLSt.setString(1, String.valueOf(codi));
+        resultat = selectParcAtraccionsSQLSt.executeQuery();
     }
 
     private PreparedStatement selectParcAtraccionsSQLSt;
@@ -75,7 +76,7 @@ public class GestorJDBC implements ProveedorPersistencia {
     //Registres a eliminar: Tots els registres amb el codi de parc d'atraccions
     //igual al passat per paràmetre.
     public void borrarCoordinadores(int codi) throws SQLException {
-        deleteCoordinadorSQL = ;        
+        deleteCoordinadorSQLSt.setString(1, String.valueOf(codi));
     }
 
     private PreparedStatement deleteCoordinadorSQLSt;
@@ -88,6 +89,12 @@ public class GestorJDBC implements ProveedorPersistencia {
     //coordinadors. Els valors dels camps seran els passat per paràmetre
     public void insertarCoordinadores(int codi) throws SQLException {
         insertCoordinadorSQL = "DELETE FROM Coordinadors WHERE codiParcAtraccions = " + codi;
+        
+        if(insertCoordinadorSQLSt.executeUpdate()==0){ //No s'ha insertat....
+            System.out.println("No s'ha insertat l'usuari");
+        }else{
+           System.out.println("S'ha insertat l'usuari"); 
+        }
     }
 
     private PreparedStatement insertCoordinadorSQLSt;
