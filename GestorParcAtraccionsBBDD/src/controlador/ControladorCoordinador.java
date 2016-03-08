@@ -2,6 +2,7 @@ package controlador;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JButton;
 import vista.*;
 
 public class ControladorCoordinador implements ActionListener {
@@ -12,6 +13,8 @@ public class ControladorCoordinador implements ActionListener {
     private Integer opcioSeleccionada = 0;
 
     public ControladorCoordinador() {
+           menuCoordinadorsVista = new MenuCoordinadorVista();
+           afegirListenersMenu();
         //Heu d'inizialitzar l'atribut menuCoordinadorsVista (això mostrarà el menú 
         //coordinador).
         //Heu d'afegir l'esdeveniment ActionListern a cada un dels botons del 
@@ -19,23 +22,33 @@ public class ControladorCoordinador implements ActionListener {
     }
 
     private void afegirListenersMenu() {
+        for (JButton menuButton : menuCoordinadorsVista.getMenuButtons()) {
+            menuButton.addActionListener(this);
+        }
         //Heu d'afegir l'esdeveniment ActionListener a cada un dels botons del 
         //menú de coordinadors.
     }
 
     private void afegirListenersForm() {
+        coordinadorForm.getbDesar().addActionListener(this);
+        coordinadorForm.getbSortir().addActionListener(this);
+        
         //Heu d'afegir l'esdeveniment ActionListener a cada un dels botons (desar i sortir)
         //del formulari de coordinadors
 
     }
 
     private void afegirListenersLlista() {
+        coordinadorLlista.getbSortir().addActionListener(this);
+
         //Heu d'afegir l'esdeveniment ActionListener al boto sortir del llistat de
         //coordinadors.
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        JButton botonpresionado = (JButton) e.getSource();
+    
         //Heu de soobrescriure el mètode actionPerformed perquè:
         // -Es cridar a bifurcaOpcio segons el botó seleccionat del menú coordinadors.
         //  Penseu que l'opció es correspon amb la posició que el botó ocupa a l'array 
