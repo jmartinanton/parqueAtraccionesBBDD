@@ -4,6 +4,8 @@
 package persistencia;
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.ParcAtraccions;
 import principal.ParcAtraccionsExcepcio;
 
@@ -27,8 +29,7 @@ public class GestorJDBC implements ProveedorPersistencia {
     //Camps: tots
     //Registres: tots els del codi de parc d'atraccions passat per paràmetre
     public void crearSQLSelect(int codi) throws SQLException {
-        selectParcAtraccionsSQL = "SELECT * FROM parcAtraccions WHERE codi = " + codi;
-        selectParcAtraccionsSQLSt = conn.prepareCall(selectParcAtraccionsSQL);
+        selectParcAtraccionsSQLSt.setString(1, String.valueOf(codi));
     }
 
     private PreparedStatement selectParcAtraccionsSQLSt;
@@ -40,9 +41,9 @@ public class GestorJDBC implements ProveedorPersistencia {
     //Heu de crear la sentència sql que insereixi un registre en la taula
     //parc d'atraccions. Els valors dels camps seran els passat per paràmetre
     public void insertarParcAtraccions(int codi, String nom, String adreca) throws SQLException {
-        insertParcAtraccionsSQL = "INSERT INTO parcAtraccions VALUES (codi = " + codi +
-                                    ", '" + nom + "', '" + adreca + "')";
-        insertParcAtraccionsSQLSt = conn.prepareCall(insertParcAtraccionsSQL);
+        insertParcAtraccionsSQLSt.setString(1, String.valueOf(codi));
+        insertParcAtraccionsSQLSt.setString(1, nom);
+        insertParcAtraccionsSQLSt.setString(1, adreca);
     }
 
     private PreparedStatement insertParcAtraccionsSQLSt;
@@ -55,9 +56,9 @@ public class GestorJDBC implements ProveedorPersistencia {
     //Registre a actualitzar: el que correspongui al codi passat per paràmetre
     //Camps a actualitzar: nom i adreça amb els valors passats per a paràmetre 
     public void actualizarParcAtraccions(int codi, String nom, String adreca) throws SQLException {
-        updateParcAtraccionsSQL = "UPDATE parcAtraccions SET nom:= '" + nom + "', adreca:= '" + adreca +
-                                    "' WHERE codi = " + codi;
-        updateParcAtraccionsSQLSt = conn.prepareCall(updateParcAtraccionsSQL);
+        updateParcAtraccionsSQLSt.setString(1, nom);
+        updateParcAtraccionsSQLSt.setString(2, adreca);
+        updateParcAtraccionsSQLSt.setString(3, String.valueOf(codi));
     }
 
     private PreparedStatement updateParcAtraccionsSQLSt;
@@ -74,8 +75,7 @@ public class GestorJDBC implements ProveedorPersistencia {
     //Registres a eliminar: Tots els registres amb el codi de parc d'atraccions
     //igual al passat per paràmetre.
     public void borrarCoordinadores(int codi) throws SQLException {
-        deleteCoordinadorSQL = "DELETE FROM Coordinadors WHERE codiParcAtraccions = " + codi;
-        deleteCoordinadorSQLSt = conn.prepareCall(deleteCoordinadorSQL);
+        deleteCoordinadorSQL = ;        
     }
 
     private PreparedStatement deleteCoordinadorSQLSt;
@@ -88,7 +88,6 @@ public class GestorJDBC implements ProveedorPersistencia {
     //coordinadors. Els valors dels camps seran els passat per paràmetre
     public void insertarCoordinadores(int codi) throws SQLException {
         insertCoordinadorSQL = "DELETE FROM Coordinadors WHERE codiParcAtraccions = " + codi;
-        insertCoordinadorSQLSt = conn.prepareCall(insertCoordinadorSQL);
     }
 
     private PreparedStatement insertCoordinadorSQLSt;
@@ -100,9 +99,8 @@ public class GestorJDBC implements ProveedorPersistencia {
     //Heu de crer la sentència sql select de la taula coordinadors
     //Camps: tots
     //Registres: tots els del codi de parc d'atraccions passat per paràmetre    
-    public void selectCoordinadores(int codi) {
+    public void selectCoordinadores(int codi) throws SQLException {
         selectCoordinadorsSQL = "SELECT * FROM Coordinadors WHERE codiParcAtraccions = " + codi;
-        selectCoordinadorsSQLSt = conn.prepareCall(selectCoordinadorsSQL);
     }
 
     private PreparedStatement selectCoordinadorsSQLSt;
@@ -114,12 +112,33 @@ public class GestorJDBC implements ProveedorPersistencia {
      * SQLException si es produeix una excepció a l'establir la connexió (en
      * aquest cas, assignareu el valor null a la connexió).
      */
-    public void estableixConnexio() throws SQLException {
+    public void estableixConnexio() {
         //Heu d'establir la connexio JDBC amb la base de dades GestorParcAtraccions
         //Heu de crear els objectes PrepareStatement declarats com a atributs d'aquesta classe
         //amb les respectives sentències sql declarades com a propietats just sobre cadascun d'ells.
         //Heu de fer el catch de les possibles excepcions SQL mostrant el missatge
         //de l'excepció capturada mitjançant getMessage().
+        String baseDades = "GestorParcAtraccions";
+        String urlBaseDades = "jdbc:mysql://mser.mooo.com:3306/"+baseDades;
+        String usuari = "root";
+        String contrasenya =null; //No existeix contrasenya.
+        ResultSet resultat = null; //De moment no hi ha cap resultat
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            conn = DriverManager.getConnection(urlBaseDades,usuari,contrasenya);
+            
+            selectParcAtraccionsSQLSt = conn.prepareStatement("SELECT * FROM parcAtraccions WHERE codi = ?" );
+            insertParcAtraccionsSQLSt = conn.prepareStatement("INSERT INTO parcAtraccions VALUES (?, ?, ?)");
+            updateParcAtraccionsSQLSt = conn.prepareStatement("UPDATE parcAtraccions SET nom:= ?, adreca:= ?" +
+                                                                "WHERE codi = ?");
+            deleteCoordinadorSQLSt = conn.prepareStatement("DELETE FROM Coordinadors WHERE codiParcAtraccions = ?");
+            insertCoordinadorSQLSt = conn.prepareStatement("INSERT INTO Coordinadors VALUES (?, ?, ?, ?");
+            selectCoordinadorsSQLSt = conn.prepareStatement("SELECT * FROM Coordinadors WHERE codiParcAtraccions = ?");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GestorJDBC.class.getName()).log(Level.SEVERE, null, ex);            
+        } catch (SQLException ex) {
+            Logger.getLogger(GestorJDBC.class.getName()).log(Level.SEVERE, null, ex);
+        }       
     }
 
     /**
@@ -128,6 +147,9 @@ public class GestorJDBC implements ProveedorPersistencia {
      */
     public void tancaConnexio() throws SQLException {
         //Heu de tancar la connexió i assignar-li el valor null, es produeixi o no una excepció.
+        if (conn != null){ //Si existeix la connexió....
+            conn.close(); //Tanquem la connexió
+        }
     }
 
     @Override
@@ -141,6 +163,7 @@ public class GestorJDBC implements ProveedorPersistencia {
         //- eliminar tots els coordinadors d'aquest parc d'atraccions de la taula coordinadors
         //  i després insertar els nous coordinadors.
         //Si al fer qualsevol operació es dona una excepció, llavors heu de llançar l'excepció ParcAtraccionsExcepció amb codi "GestorJDBC.desar"
+        
     }
 
     @Override
