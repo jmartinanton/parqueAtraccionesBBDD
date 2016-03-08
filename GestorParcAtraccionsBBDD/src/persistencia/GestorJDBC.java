@@ -73,10 +73,9 @@ public class GestorJDBC implements ProveedorPersistencia {
     //d'atraccions determinat.
     //Registres a eliminar: Tots els registres amb el codi de parc d'atraccions
     //igual al passat per paràmetre.
-    public void borrarCoordinadores() {
-        deleteCoordinadorSQL = "UPDATE parcAtraccions SET nom:= '" + nom + "', adreca:= '" + adreca +
-                                    "' WHERE codi = " + codi;
-        deleteCoordinadorSQLSt = conn.prepareCall(updateParcAtraccionsSQL);
+    public void borrarCoordinadores(int codi) throws SQLException {
+        deleteCoordinadorSQL = "DELETE FROM Coordinadors WHERE codiParcAtraccions = " + codi;
+        deleteCoordinadorSQLSt = conn.prepareCall(deleteCoordinadorSQL);
     }
 
     private PreparedStatement deleteCoordinadorSQLSt;
