@@ -86,6 +86,10 @@ public class GestorJDBC implements ProveedorPersistencia {
     private static String insertCoordinadorSQL;
     //Heu de crear la sentència sql que insereixi un registre en la taula
     //coordinadors. Els valors dels camps seran els passat per paràmetre
+    public void insertarCoordinadores(int codi) throws SQLException {
+        insertCoordinadorSQL = "DELETE FROM Coordinadors WHERE codiParcAtraccions = " + codi;
+        insertCoordinadorSQLSt = conn.prepareCall(insertCoordinadorSQL);
+    }
 
     private PreparedStatement insertCoordinadorSQLSt;
 
@@ -95,7 +99,11 @@ public class GestorJDBC implements ProveedorPersistencia {
     private static String selectCoordinadorsSQL;
     //Heu de crer la sentència sql select de la taula coordinadors
     //Camps: tots
-    //Registres: tots els del codi de parc d'atraccions passat per paràmetre            
+    //Registres: tots els del codi de parc d'atraccions passat per paràmetre    
+    public void selectCoordinadores(int codi) {
+        selectCoordinadorsSQL = "SELECT * FROM Coordinadors WHERE codiParcAtraccions = " + codi;
+        selectCoordinadorsSQLSt = conn.prepareCall(selectCoordinadorsSQL);
+    }
 
     private PreparedStatement selectCoordinadorsSQLSt;
 
