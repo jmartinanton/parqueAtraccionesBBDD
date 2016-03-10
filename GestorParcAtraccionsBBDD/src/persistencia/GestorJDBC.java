@@ -3,6 +3,7 @@
  */
 package persistencia;
 
+import controlador.ControladorPrincipal;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,7 +32,7 @@ public class GestorJDBC implements ProveedorPersistencia {
     //Heu de crer la sentència sql select de la taula parcAtraccions
     //Camps: tots
     //Registres: tots els del codi de parc d'atraccions passat per paràmetre
-    public void crearSQLSelect(int codi) throws SQLException {
+    public void selectParcsAtraccions(int codi) throws SQLException {
         selectParcAtraccionsSQLSt.setString(1, String.valueOf(codi));
         resultat = selectParcAtraccionsSQLSt.executeQuery();
     }
@@ -177,7 +178,7 @@ public class GestorJDBC implements ProveedorPersistencia {
             //- eliminar tots els coordinadors d'aquest parc d'atraccions de la taula coordinadors
             //  i després insertar els nous coordinadors.
             //Si al fer qualsevol operació es dona una excepció, llavors heu de llançar l'excepció ParcAtraccionsExcepció amb codi "GestorJDBC.desar"
-            crearSQLSelect(parcAtraccions.getCodi());
+            selectParcsAtraccions(parcAtraccions.getCodi());
             if (resultat.next()) {
                 actualizarParcAtraccions(parcAtraccions.getCodi(), parcAtraccions.getNom(), parcAtraccions.getAdreca());
                 updateParcAtraccionsSQLSt.executeUpdate();
@@ -199,16 +200,37 @@ public class GestorJDBC implements ProveedorPersistencia {
 
     @Override
     public ParcAtraccions carregarParcAtraccions(String nomFitxer) throws ParcAtraccionsExcepcio {
-        //Heu de carregar el parc d'atraccions des de la base de dades (nomFitxer és el codi del parc d'atraccions)
-        //Per fer això, heu de cercar el registre parc d'atraccions de la taula
-        //parcsAtraccions amb codi = nomFitxer
-        //A més, heu d'afegir els coordinadors al vector d'elements del parc d'atraccions a 
-        //partir de la taula coordinadors.
-        //Si al fer qualsevol operació es dona una excepció, llavors heu de llançar 
-        //l'excepció ParcAtraccionsExcepció amb codi "GestorJDBC.carrega"
-        //Si el nomFitxer donat no existeix a la taula parcAtraccions (és a dir, el codi = nomFitxer no existeix), 
-        //aleshores heu de llançar l'excepció ParcAtraccionsExcepció amb codi "GestorJDBC.noexist"
-        
+        try {
+            //Heu de carregar el parc d'atraccions des de la base de dades (nomFitxer és el codi del parc d'atraccions)
+            //Per fer això, heu de cercar el registre parc d'atraccions de la taula
+            //parcsAtraccions amb codi = nomFitxer
+            //A més, heu d'afegir els coordinadors al vector d'elements del parc d'atraccions a
+            //partir de la taula coordinadors.
+            //Si al fer qualsevol operació es dona una excepció, llavors heu de llançar
+            //l'excepció ParcAtraccionsExcepció amb codi "GestorJDBC.carrega"
+            //Si el nomFitxer donat no existeix a la taula parcAtraccions (és a dir, el codi = nomFitxer no existeix),
+            //aleshores heu de llançar l'excepció ParcAtraccionsExcepció amb codi "GestorJDBC.noexist"
+            selectParcsAtraccions(Integer.parseInt(nomFitxer));
+            resultat = selectParcAtraccionsSQLSt.executeQuery();
+            if (resultat.next()) {
+                ControladorPrincipal.setParcAtraccionsActual(new ParcAtraccions(resultat.getInt("codi"),
+                        resultat.getString("nom"),
+                        resultat.getString("adreca")));
+                selectCoordinadores(Integer.parseInt(nomFitxer));
+                resultat = selectCoordinadorsSQLSt.executeQuery();
+                while (resultat.next()) {
+                    Coordinador coordinador = new Coordinador(resultat.getString("nif"),
+                            resultat.getString("nom"),
+                            resultat.getString("cognom"));
+                    ControladorPrincipal.getParcAtraccionsActual().nouCoordinador(coordinador);
+                }
+            } else {
+                throw new ParcAtraccionsExcepcio("GestorJDBC.noexist");
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(GestorJDBC.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ControladorPrincipal.getParcAtraccionsActual();
     }
-
 }
