@@ -9,7 +9,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Coordinador;
 import model.ParcAtraccions;
-import model.Zona;
 import principal.ParcAtraccionsExcepcio;
 
 //Heu d'implementar el que es requereix a cada mètode / propietat
@@ -134,8 +133,8 @@ public class GestorJDBC implements ProveedorPersistencia {
         //de l'excepció capturada mitjançant getMessage().
         String baseDades = "GestorParcAtraccions";
         String urlBaseDades = "jdbc:mysql://mser.mooo.com:3306/"+baseDades;
-        String usuari = "root";
-        String contrasenya =null; //No existeix contrasenya.
+        String usuari = "marc";
+        String contrasenya ="Contrasena92"; //No existeix contrasenya.
         resultat = null; //De moment no hi ha cap resultat
         try {
             Class.forName("com.mysql.jdbc.Driver");
