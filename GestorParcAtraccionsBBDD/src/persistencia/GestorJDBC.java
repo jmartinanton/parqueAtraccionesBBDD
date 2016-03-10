@@ -32,7 +32,7 @@ public class GestorJDBC implements ProveedorPersistencia {
     //Camps: tots
     //Registres: tots els del codi de parc d'atraccions passat per paràmetre
     public void selectParcsAtraccions(int codi) throws SQLException {
-        selectParcAtraccionsSQLSt.setString(1, String.valueOf(codi));
+        //selectParcAtraccionsSQLSt.setString(1, String.valueOf(codi));
         resultat = selectParcAtraccionsSQLSt.executeQuery();
     }
 
@@ -140,13 +140,14 @@ public class GestorJDBC implements ProveedorPersistencia {
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(urlBaseDades,usuari,contrasenya);
             
-            selectParcAtraccionsSQLSt = conn.prepareStatement("SELECT * FROM parcAtraccions WHERE codi = ?" );
+            selectParcAtraccionsSQLSt = conn.prepareStatement("SELECT * FROM parcAtraccions WHERE codi = 1");
+            selectParcAtraccionsSQLSt.executeQuery();
             insertParcAtraccionsSQLSt = conn.prepareStatement("INSERT INTO parcAtraccions VALUES (?, ?, ?)");
             updateParcAtraccionsSQLSt = conn.prepareStatement("UPDATE parcAtraccions SET nom:= ?, adreca:= ?" +
                                                                 "WHERE codi = ?");
-            deleteCoordinadorSQLSt = conn.prepareStatement("DELETE FROM Coordinadors WHERE codiParcAtraccions = ?");
-            insertCoordinadorSQLSt = conn.prepareStatement("INSERT INTO Coordinadors VALUES (?, ?, ?, ?)");
-            selectCoordinadorsSQLSt = conn.prepareStatement("SELECT * FROM Coordinadors WHERE codiParcAtraccions = ?");
+            deleteCoordinadorSQLSt = conn.prepareStatement("DELETE FROM coordinadors WHERE codiParcAtraccions = ?");
+            insertCoordinadorSQLSt = conn.prepareStatement("INSERT INTO coordinadors VALUES (?, ?, ?, ?)");
+            selectCoordinadorsSQLSt = conn.prepareStatement("SELECT * FROM coordinadors WHERE codiParcAtraccions = ?");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(GestorJDBC.class.getName()).log(Level.SEVERE, null, ex);            
         } catch (SQLException ex) {
