@@ -38,6 +38,12 @@ public class ParcAtraccionsExcepcio extends Exception {
             case "GestorXML.carregar":
                 missatge = "No s'ha pogut carregar el parc d'atraccions a causa d'error d'entrada/sortida";
                 break;
+            case "GestorJDBC.noExisteix":
+                missatge = "No existeix el parc d'atraccions";
+            case "GestorJDBC.desar":
+                missatge = "No s'ha pogut desar el parc d'atraccions";
+            case "GestorJDBC.carregar":
+                missatge = "No s'ha pogut carregar el parc d'atraccions";
             default:
                 missatge = "Error desconegut";
                 break;
