@@ -6,7 +6,9 @@ package persistencia;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Coordinador;
 import model.ParcAtraccions;
+import model.Zona;
 import principal.ParcAtraccionsExcepcio;
 
 //Heu d'implementar el que es requereix a cada mètode / propietat
@@ -20,6 +22,7 @@ public class GestorJDBC implements ProveedorPersistencia {
     /*
      PreparedStatement necessaris
      */
+    ResultSet resultat;
 
     /*
      Obtenir els registres d'un parc d'atraccions
@@ -43,8 +46,8 @@ public class GestorJDBC implements ProveedorPersistencia {
     //parc d'atraccions. Els valors dels camps seran els passat per paràmetre
     public void insertarParcAtraccions(int codi, String nom, String adreca) throws SQLException {
         insertParcAtraccionsSQLSt.setString(1, String.valueOf(codi));
-        insertParcAtraccionsSQLSt.setString(1, nom);
-        insertParcAtraccionsSQLSt.setString(1, adreca);
+        insertParcAtraccionsSQLSt.setString(2, nom);
+        insertParcAtraccionsSQLSt.setString(3, adreca);
     }
 
     private PreparedStatement insertParcAtraccionsSQLSt;
@@ -87,14 +90,17 @@ public class GestorJDBC implements ProveedorPersistencia {
     private static String insertCoordinadorSQL;
     //Heu de crear la sentència sql que insereixi un registre en la taula
     //coordinadors. Els valors dels camps seran els passat per paràmetre
-    public void insertarCoordinadores(int codi) throws SQLException {
-        insertCoordinadorSQL = "DELETE FROM Coordinadors WHERE codiParcAtraccions = " + codi;
+    public void insertarCoordinadores(String nif, String nom, String cognom, int codiParc) throws SQLException {
+        insertCoordinadorSQLSt.setString(1, nif);
+        insertCoordinadorSQLSt.setString(2, nom);
+        insertCoordinadorSQLSt.setString(3, cognom);
+        insertCoordinadorSQLSt.setString(4, String.valueOf(codiParc));
         
-        if(insertCoordinadorSQLSt.executeUpdate()==0){ //No s'ha insertat....
+        /*if(insertCoordinadorSQLSt.executeUpdate()==0){ //No s'ha insertat....
             System.out.println("No s'ha insertat l'usuari");
         }else{
            System.out.println("S'ha insertat l'usuari"); 
-        }
+        }*/
     }
 
     private PreparedStatement insertCoordinadorSQLSt;
@@ -129,7 +135,7 @@ public class GestorJDBC implements ProveedorPersistencia {
         String urlBaseDades = "jdbc:mysql://mser.mooo.com:3306/"+baseDades;
         String usuari = "root";
         String contrasenya =null; //No existeix contrasenya.
-        ResultSet resultat = null; //De moment no hi ha cap resultat
+        resultat = null; //De moment no hi ha cap resultat
         try {
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(urlBaseDades,usuari,contrasenya);
@@ -139,7 +145,7 @@ public class GestorJDBC implements ProveedorPersistencia {
             updateParcAtraccionsSQLSt = conn.prepareStatement("UPDATE parcAtraccions SET nom:= ?, adreca:= ?" +
                                                                 "WHERE codi = ?");
             deleteCoordinadorSQLSt = conn.prepareStatement("DELETE FROM Coordinadors WHERE codiParcAtraccions = ?");
-            insertCoordinadorSQLSt = conn.prepareStatement("INSERT INTO Coordinadors VALUES (?, ?, ?, ?");
+            insertCoordinadorSQLSt = conn.prepareStatement("INSERT INTO Coordinadors VALUES (?, ?, ?, ?)");
             selectCoordinadorsSQLSt = conn.prepareStatement("SELECT * FROM Coordinadors WHERE codiParcAtraccions = ?");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(GestorJDBC.class.getName()).log(Level.SEVERE, null, ex);            
@@ -161,16 +167,34 @@ public class GestorJDBC implements ProveedorPersistencia {
 
     @Override
     public void desarParcAtraccions(String nomFitxer, ParcAtraccions parcAtraccions) throws ParcAtraccionsExcepcio {
-        //Heu de desar el parc d'atraccions passat com a paràmetre en la base de dades:
-        //S'ha de desar en la taula parcAtraccions (nomFitxer és el codi del parc d'atraccions)
-        //Cada coordinador del parc d'atraccions, s'ha de desar com registre de la taula coordinador
-        //Heu de tenir en compte que si el parc d'atraccions ja existeix a la base de dades,
-        //aleshores heu de fer el següent:
-        //- actualitzar el parc d'atraccions ja existent
-        //- eliminar tots els coordinadors d'aquest parc d'atraccions de la taula coordinadors
-        //  i després insertar els nous coordinadors.
-        //Si al fer qualsevol operació es dona una excepció, llavors heu de llançar l'excepció ParcAtraccionsExcepció amb codi "GestorJDBC.desar"
-        
+        try {
+            //Heu de desar el parc d'atraccions passat com a paràmetre en la base de dades:
+            //S'ha de desar en la taula parcAtraccions (nomFitxer és el codi del parc d'atraccions)
+            //Cada coordinador del parc d'atraccions, s'ha de desar com registre de la taula coordinador
+            //Heu de tenir en compte que si el parc d'atraccions ja existeix a la base de dades,
+            //aleshores heu de fer el següent:
+            //- actualitzar el parc d'atraccions ja existent
+            //- eliminar tots els coordinadors d'aquest parc d'atraccions de la taula coordinadors
+            //  i després insertar els nous coordinadors.
+            //Si al fer qualsevol operació es dona una excepció, llavors heu de llançar l'excepció ParcAtraccionsExcepció amb codi "GestorJDBC.desar"
+            crearSQLSelect(parcAtraccions.getCodi());
+            if (resultat.next()) {
+                actualizarParcAtraccions(parcAtraccions.getCodi(), parcAtraccions.getNom(), parcAtraccions.getAdreca());
+                updateParcAtraccionsSQLSt.executeUpdate();
+                borrarCoordinadores(parcAtraccions.getCodi());
+                deleteCoordinadorSQLSt.executeUpdate();
+            }
+            for (int i = 0; i < parcAtraccions.getElements().length; i++) {
+                if (parcAtraccions.getElements()[i] instanceof Coordinador) {
+                    insertarCoordinadores(((Coordinador)parcAtraccions.getElements()[i]).getNif(),
+                                            ((Coordinador)parcAtraccions.getElements()[i]).getNom(),
+                                            ((Coordinador)parcAtraccions.getElements()[i]).getCognom(),
+                                            parcAtraccions.getCodi());
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(GestorJDBC.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
@@ -184,7 +208,7 @@ public class GestorJDBC implements ProveedorPersistencia {
         //l'excepció ParcAtraccionsExcepció amb codi "GestorJDBC.carrega"
         //Si el nomFitxer donat no existeix a la taula parcAtraccions (és a dir, el codi = nomFitxer no existeix), 
         //aleshores heu de llançar l'excepció ParcAtraccionsExcepció amb codi "GestorJDBC.noexist"
-
+        
     }
 
 }
