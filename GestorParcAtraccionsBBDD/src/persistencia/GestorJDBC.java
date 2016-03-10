@@ -125,14 +125,14 @@ public class GestorJDBC implements ProveedorPersistencia {
      * SQLException si es produeix una excepció a l'establir la connexió (en
      * aquest cas, assignareu el valor null a la connexió).
      */
-    public void estableixConnexio() {
+    public void GestorJDBC() {
         //Heu d'establir la connexio JDBC amb la base de dades GestorParcAtraccions
         //Heu de crear els objectes PrepareStatement declarats com a atributs d'aquesta classe
         //amb les respectives sentències sql declarades com a propietats just sobre cadascun d'ells.
         //Heu de fer el catch de les possibles excepcions SQL mostrant el missatge
         //de l'excepció capturada mitjançant getMessage().
         String baseDades = "GestorParcAtraccions";
-        String urlBaseDades = "jdbc:mysql://mser.mooo.com:3306/"+baseDades;
+        String urlBaseDades = "jdbc:mysql://mser.mooo.com:3306/" + baseDades;
         String usuari = "marc";
         String contrasenya ="Contrasena92"; //No existeix contrasenya.
         resultat = null; //De moment no hi ha cap resultat
