@@ -32,7 +32,7 @@ public class GestorJDBC implements ProveedorPersistencia {
     //Camps: tots
     //Registres: tots els del codi de parc d'atraccions passat per paràmetre
     public void selectParcsAtraccions(int codi) throws SQLException {
-        //selectParcAtraccionsSQLSt.setString(1, String.valueOf(codi));
+        selectParcAtraccionsSQLSt.setString(1, String.valueOf(codi));
         resultat = selectParcAtraccionsSQLSt.executeQuery();
     }
 
@@ -125,7 +125,7 @@ public class GestorJDBC implements ProveedorPersistencia {
      * SQLException si es produeix una excepció a l'establir la connexió (en
      * aquest cas, assignareu el valor null a la connexió).
      */
-    public void GestorJDBC() {
+    public GestorJDBC() {
         //Heu d'establir la connexio JDBC amb la base de dades GestorParcAtraccions
         //Heu de crear els objectes PrepareStatement declarats com a atributs d'aquesta classe
         //amb les respectives sentències sql declarades com a propietats just sobre cadascun d'ells.
@@ -140,8 +140,7 @@ public class GestorJDBC implements ProveedorPersistencia {
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(urlBaseDades,usuari,contrasenya);
             
-            selectParcAtraccionsSQLSt = conn.prepareStatement("SELECT * FROM parcAtraccions WHERE codi = 1");
-            selectParcAtraccionsSQLSt.executeQuery();
+            selectParcAtraccionsSQLSt = conn.prepareStatement("SELECT * FROM parcAtraccions WHERE codi = ?");
             insertParcAtraccionsSQLSt = conn.prepareStatement("INSERT INTO parcAtraccions VALUES (?, ?, ?)");
             updateParcAtraccionsSQLSt = conn.prepareStatement("UPDATE parcAtraccions SET nom:= ?, adreca:= ?" +
                                                                 "WHERE codi = ?");
@@ -152,7 +151,7 @@ public class GestorJDBC implements ProveedorPersistencia {
             Logger.getLogger(GestorJDBC.class.getName()).log(Level.SEVERE, null, ex);            
         } catch (SQLException ex) {
             Logger.getLogger(GestorJDBC.class.getName()).log(Level.SEVERE, null, ex);
-        }       
+        }
     }
 
     /**
@@ -184,6 +183,9 @@ public class GestorJDBC implements ProveedorPersistencia {
                 updateParcAtraccionsSQLSt.executeUpdate();
                 borrarCoordinadores(parcAtraccions.getCodi());
                 deleteCoordinadorSQLSt.executeUpdate();
+            } else {
+                insertarParcAtraccions(parcAtraccions.getCodi(), parcAtraccions.getNom(), parcAtraccions.getAdreca());
+                insertParcAtraccionsSQLSt.executeUpdate();
             }
             for (int i = 0; i < parcAtraccions.getElements().length; i++) {
                 if (parcAtraccions.getElements()[i] instanceof Coordinador) {
@@ -191,6 +193,7 @@ public class GestorJDBC implements ProveedorPersistencia {
                                             ((Coordinador)parcAtraccions.getElements()[i]).getNom(),
                                             ((Coordinador)parcAtraccions.getElements()[i]).getCognom(),
                                             parcAtraccions.getCodi());
+                    insertCoordinadorSQLSt.executeUpdate();
                 }
             }
         } catch (SQLException ex) {
