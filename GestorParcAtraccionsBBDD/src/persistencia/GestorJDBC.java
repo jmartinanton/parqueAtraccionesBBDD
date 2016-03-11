@@ -113,7 +113,7 @@ public class GestorJDBC implements ProveedorPersistencia {
     //Camps: tots
     //Registres: tots els del codi de parc d'atraccions passat per paràmetre    
     public void selectCoordinadores(int codi) throws SQLException {
-        selectCoordinadorsSQL = "SELECT * FROM Coordinadors WHERE codiParcAtraccions = " + codi;
+        selectCoordinadorsSQLSt.setString(1, String.valueOf(codi));
     }
 
     private PreparedStatement selectCoordinadorsSQLSt;
@@ -137,7 +137,7 @@ public class GestorJDBC implements ProveedorPersistencia {
         String contrasenya ="Contrasena92"; //No existeix contrasenya.
         resultat = null; //De moment no hi ha cap resultat
         try {
-            Class.forName("com.mysql.jdbc.Driver");//
+            Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(urlBaseDades,usuari,contrasenya);
             
             selectParcAtraccionsSQLSt = conn.prepareStatement("SELECT * FROM parcAtraccions WHERE codi = ?");
