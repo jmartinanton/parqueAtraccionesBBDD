@@ -56,8 +56,10 @@ public class ControladorCoordinador implements ActionListener {
         if (menuCoordinadorsVista != null && formOrigenBoton == menuCoordinadorsVista.getFrame()) {
             JButton[] listaBotones = menuCoordinadorsVista.getMenuButtons();
                     for (int i = 0; i < listaBotones.length; i++) {
-            if (listaBotones[i] == botonpresionado) opcioSeleccionada = i;
-            bifurcaOpcio(opcioSeleccionada);
+            if (listaBotones[i] == botonpresionado) { 
+                opcioSeleccionada = i;
+                bifurcaOpcio(opcioSeleccionada);
+            }
         }
         } else if (coordinadorForm != null && formOrigenBoton == coordinadorForm.getFrame()) {
             if (botonpresionado == coordinadorForm.getbDesar()){
@@ -91,6 +93,7 @@ public class ControladorCoordinador implements ActionListener {
     private void bifurcaOpcio(Integer opcio) {
         switch (opcio) {
             case 0: //sortir
+                menuCoordinadorsVista.getFrame().setVisible(false);
                 ControladorPrincipal.getMenuPrincipalVista().getFrame().setVisible(true);
                 break;
             case 1: // alta
