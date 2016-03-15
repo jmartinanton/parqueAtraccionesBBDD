@@ -27,7 +27,7 @@ public class GestorJDBC implements ProveedorPersistencia {
     /*
      Obtenir els registres d'un parc d'atraccions
      */
-    private static String selectParcAtraccionsSQL;
+    //private static String selectParcAtraccionsSQL;
     //Heu de crer la sentència sql select de la taula parcAtraccions
     //Camps: tots
     //Registres: tots els del codi de parc d'atraccions passat per paràmetre
@@ -41,7 +41,7 @@ public class GestorJDBC implements ProveedorPersistencia {
     /*
      * Insertar un parc d'atraccions
      */
-    private static String insertParcAtraccionsSQL;
+    //private static String insertParcAtraccionsSQL;
     //Heu de crear la sentència sql que insereixi un registre en la taula
     //parc d'atraccions. Els valors dels camps seran els passat per paràmetre
     public void insertarParcAtraccions(int codi, String nom, String adreca) throws SQLException {
@@ -55,7 +55,7 @@ public class GestorJDBC implements ProveedorPersistencia {
     /*
      * Modificar el nom i adreça d'un parc d'atraccions
      */
-    private static String updateParcAtraccionsSQL;
+    //private static String updateParcAtraccionsSQL;
     //Heu de crear la sentència per actualitzar un registre del parc d'atraccions
     //Registre a actualitzar: el que correspongui al codi passat per paràmetre
     //Camps a actualitzar: nom i adreça amb els valors passats per a paràmetre 
@@ -73,7 +73,7 @@ public class GestorJDBC implements ProveedorPersistencia {
     /*
      * Eliminar els coordinadors d'un parc d'atraccions
      */
-    private static String deleteCoordinadorSQL;
+    //private static String deleteCoordinadorSQL;
     //Heu de crear la sentència per eliminar tots el coordinador d'un parc 
     //d'atraccions determinat.
     //Registres a eliminar: Tots els registres amb el codi de parc d'atraccions
@@ -87,7 +87,7 @@ public class GestorJDBC implements ProveedorPersistencia {
     /*
      * Insertar un coordinador
      */
-    private static String insertCoordinadorSQL;
+    //private static String insertCoordinadorSQL;
     //Heu de crear la sentència sql que insereixi un registre en la taula
     //coordinadors. Els valors dels camps seran els passat per paràmetre
     public void insertarCoordinadores(String nif, String nom, String cognom, int codiParc) throws SQLException {
