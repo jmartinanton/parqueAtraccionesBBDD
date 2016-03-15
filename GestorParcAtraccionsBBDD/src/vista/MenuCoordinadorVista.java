@@ -12,8 +12,8 @@ public class MenuCoordinadorVista {
 
     private JButton[] menuButtons = new JButton[3];
 
-    private Integer amplada = 1200;
-    private Integer alcada = 800;
+    private Integer amplada = 300;
+    private Integer alcada = 200;
 
     public MenuCoordinadorVista() {
         //Definició de la finestra del menú

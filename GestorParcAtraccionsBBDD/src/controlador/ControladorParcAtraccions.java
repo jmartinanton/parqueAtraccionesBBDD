@@ -84,6 +84,7 @@ public class ControladorParcAtraccions implements ActionListener {
         int tipusMissatge;
         switch (opcio) {
             case 0: //sortir
+                menuParcAtraccionsVista.getFrame().setVisible(false);
                 ControladorPrincipal.getMenuPrincipalVista().getFrame().setVisible(true);
                 break;
             case 1: // alta

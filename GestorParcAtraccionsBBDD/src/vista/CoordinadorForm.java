@@ -10,8 +10,8 @@ public class CoordinadorForm {
 
     private JFrame frame;
     private JPanel panelfu; //Panel per les dades del coordinador
-    private Integer amplada = 800;
-    private Integer alcada = 400;
+    private Integer amplada = 300;
+    private Integer alcada = 200;
 
     private JLabel lNif;
     private JTextField tNif;
